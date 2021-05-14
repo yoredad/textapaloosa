@@ -3,6 +3,10 @@ package org.feezor.textapalooza.game.domain;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Item {
+	@JsonProperty("LockedIndicator")
+	private boolean locked;
+	@JsonProperty("KeyIdentifier")
+	private String keyId;
 	@JsonProperty("Identifier")
 	private String id;
 	@JsonProperty("Description")
@@ -34,6 +38,30 @@ public class Item {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public boolean isLocked() {
+		return locked;
+	}
+
+	public void setLocked(boolean locked) {
+		this.locked = locked;
+	}
+
+	public String getKeyId() {
+		return keyId;
+	}
+
+	public void setKeyId(String keyId) {
+		this.keyId = keyId;
+	}
+
+	public boolean isCanTake() {
+		return canTake;
+	}
+
+	public void setCanTake(boolean canTake) {
+		this.canTake = canTake;
 	}
 	
 
