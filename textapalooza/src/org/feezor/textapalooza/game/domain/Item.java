@@ -1,5 +1,8 @@
 package org.feezor.textapalooza.game.domain;
 
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Item {
@@ -15,6 +18,8 @@ public class Item {
 	private String name;
 	@JsonProperty("CanTakeIndicator")
 	private boolean canTake;
+	@JsonProperty("Items")
+	private List<Item> items;
 
 	public String getDescription() {
 		return description;
@@ -63,6 +68,18 @@ public class Item {
 	public void setCanTake(boolean canTake) {
 		this.canTake = canTake;
 	}
+
+	public List<Item> getItems() {
+		return items;
+	}
+
+	public void setItems(List<Item> items) {
+		this.items = items;
+	}
 	
+	@JsonIgnore
+	public boolean hasItems() {
+		return items!=null && items.size()>0;
+	}
 
 }

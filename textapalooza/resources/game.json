@@ -1,12 +1,12 @@
 {
   "Description" : "Zoe's Big Adventure Part 1",
-  "Title" : "Girl We Tryin",
-  "Help" : "Try one of:\nLOOK\nSEARCH\nGO\nOPEN\nEXIT\n",
+  "Title" : "Girl We Tryin'",
+  "Help" : "Try one of:\nLOOK\nSEARCH\nGO\nOPEN\nEXIT\nINVENTORY\nCREDITS\nLOOT\nTAKE\n",
   "Credits" : "YoreDad\n",
   "Rooms" : [ {
     "LockedIndicator" : false,
     "Identifier" : "ROOM1",
-    "Description" : "You are in a dark room.\n  A girl lies prone on the sofa.\n  Her finger is bleeding.",
+    "Description" : "You are in a dark room.\nA girl lies prone on the sofa.\nHer finger is bleeding.",
     "Name" : "Family Room",
     "CanTakeIndicator" : false,
     "Items" : [ {
@@ -15,7 +15,29 @@
       "Description" : "A red sofa",
       "Name" : "Sofa",
       "CanTakeIndicator" : false
-    } ],
+    },
+     {
+      "LockedIndicator" : false,
+      "Identifier" : "GIRL",
+      "Description" : "A pale spaced out girl",
+      "Name" : "Girl",
+      "CanTakeIndicator" : false
+    },
+     {
+      "LockedIndicator" : false,
+      "Identifier" : "FIRSTAID",
+      "Description" : "A first aid kit mounted on the wall",
+      "Name" : "First Aid Kit",
+      "CanTakeIndicator" : false,
+       "Items" : [ {
+      "LockedIndicator" : false,
+      "Identifier" : "BANDAID",
+      "Description" : "A bandaid",
+      "Name" : "Bandaid",
+      "CanTakeIndicator" : true
+    	}]
+    }
+    ],
     "Doors" : [ {
       "LockedIndicator" : false,
       "Identifier" : "DOOR1",
