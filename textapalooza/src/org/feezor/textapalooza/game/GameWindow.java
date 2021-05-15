@@ -46,6 +46,7 @@ public class GameWindow {
 					GameWindow window = new GameWindow(new File(gameFile));
 					window.frame.setVisible(true);
 				} catch (Exception e) {
+					e.printStackTrace();
 					System.out.println(e.getMessage());
 					System.exit(-1);
 				}
@@ -69,6 +70,7 @@ public class GameWindow {
 	 */
 	private void initialize(File f) {
 		game = JSONUtils.jsonToObject(FileUtil.readFile(f), Game.class);
+		
 		player = new Player();
 		curRoom = game.getRooms().get(0);
 		
@@ -98,7 +100,7 @@ public class GameWindow {
 		frame.getContentPane().add(lblNewLabel);
 		
 		// init the display
-		textField.setText(curRoom.getDescription());
+		textArea.setText(curRoom.getDescription());
 		if(game.getStartingItems()!=null) {
 			player.setItems(game.getStartingItems());
 		}
