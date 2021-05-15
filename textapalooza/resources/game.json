@@ -1,7 +1,7 @@
 {
   "Description" : "Zoe's Big Adventure Part 1",
   "Title" : "Girl We Tryin'",
-  "Help" : "Try one of:\nLOOK\nSEARCH\nGO\nOPEN\nEXIT\nINVENTORY\nCREDITS\nLOOT\nTAKE\n",
+  "Help" : "Try one of:\nLOOK\nSEARCH\nGO\nOPEN\nEXIT\nINVENTORY\nCREDITS\nLOOT\nTAKE\nUSE\n",
   "Credits" : "YoreDad\n",
   "Rooms" : [ {
     "LockedIndicator" : false,
@@ -39,7 +39,7 @@
     }
     ],
     "Doors" : [ {
-      "LockedIndicator" : false,
+      "LockedIndicator" : true,
       "Identifier" : "DOOR1",
       "Description" : "Wood paneled door",
       "Name" : "Door",
