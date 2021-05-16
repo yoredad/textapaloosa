@@ -21,7 +21,33 @@
       "Identifier" : "GIRL",
       "Description" : "A pale spaced out girl",
       "Name" : "Girl",
-      "CanTakeIndicator" : false
+      "CanTakeIndicator" : false,
+      "Items" : [ {
+        "LockedIndicator" : false,
+        "Identifier" : "KEY1",
+        "Description" : "She has a phallic shaped key.",
+        "Name" : "Penis Key",
+        "CanTakeIndicator" : false,
+        "oneTimeUseIndicator" : false
+      } ],
+      "CommandActions" : [ {
+        "Command" : "TALK",
+        "Actions" : [ {
+          "Text" : "Oh no my finger is bleeding, I feel quite faint! If only I had some cheese, or better yet, a bandAid!"
+        }] 
+        },
+        {
+        "Command" : "USE",
+        "Actions" : [ {
+          "Text" : "Oh thank you, I feek so much better! Please, have this Penis key of mine. It's the least I could do.",
+          "ItemIdentifier" : "BANDAID",
+          "RewardItemIdentifier" : "KEY1"
+        },
+        {
+          "Text" : "Ah! It's too bright!",
+          "ItemIdentifier" : "FLASHLIGHT"
+        } ]
+       } ]
     },
      {
       "LockedIndicator" : false,

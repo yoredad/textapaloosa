@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.feezor.textapalooza.game.GameWindow;
+import org.feezor.textapalooza.game.domain.Action;
+import org.feezor.textapalooza.game.domain.CommandAction;
 import org.feezor.textapalooza.game.domain.Door;
 import org.feezor.textapalooza.game.domain.Door.Orientation;
 import org.feezor.textapalooza.utils.FileUtil;
@@ -12,6 +14,7 @@ import org.feezor.textapalooza.utils.JSONUtils;
 import org.feezor.textapalooza.game.domain.Game;
 import org.feezor.textapalooza.game.domain.Item;
 import org.feezor.textapalooza.game.domain.Room;
+import org.feezor.textapalooza.game.domain.CommandAction.Command;
 
 public class Textapalooza {
 
@@ -21,7 +24,7 @@ public class Textapalooza {
 		GameWindow gw = new GameWindow();
 		gw.main(args);
 		
-//		genTemplate();
+		//genTemplate();
 	}
 	
 	private static void genTemplate() {
@@ -44,6 +47,28 @@ public class Textapalooza {
 		item.setDescription("A red sofa");
 		item.setName("Sofa");
 		items.add(item);
+		CommandAction cmdAction = new CommandAction() ;
+		cmdAction.setCommand (Command.TALK);
+		List <Action> actions = new ArrayList <Action>() ;
+		Action action = new Action() ;
+		action.setText ("Oh no my finger is bleeding, I feel quite faint! If only I had some cheese, or better yet, a bandAid!") ;
+		action.setItemId ("KEY1") ;
+		actions.add (action) ;
+		cmdAction.setActions(actions);
+		List <CommandAction> commandActions = new ArrayList <CommandAction>() ;
+		commandActions.add(cmdAction) ;
+		item.setCommandActions(commandActions) ;
+		
+		//KEY
+		List <Item> itemList = new ArrayList <Item> () ; //list for girl (contains key)
+		Item key = new Item() ;
+		key.setId("KEY1") ;
+		key.setDescription("She has a phallic shaped key.");
+		key.setName("Penis Key") ;
+		itemList.add(key) ;
+		item.setItems(itemList);
+		
+		
 		
 		room.setItems(items);
 		
@@ -88,6 +113,7 @@ public class Textapalooza {
 		rooms.add(room);
 		
 		game.setRooms(rooms);
+		
 		
 		// player starting items
 		items = new ArrayList<Item>();

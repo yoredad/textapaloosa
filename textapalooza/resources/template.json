@@ -14,14 +14,32 @@
       "Identifier" : "SOFA",
       "Description" : "A red sofa",
       "Name" : "Sofa",
-      "CanTakeIndicator" : false
+      "CanTakeIndicator" : false,
+      "Items" : [ {
+        "LockedIndicator" : false,
+        "Identifier" : "KEY1",
+        "Description" : "She has a phallic shaped key.",
+        "Name" : "Penis Key",
+        "CanTakeIndicator" : false,
+        "oneTimeUseIndicator" : false
+      } ],
+      "oneTimeUseIndicator" : false,
+      "CommandActions" : [ {
+        "Command" : "TALK",
+        "Actions" : [ {
+          "Text" : "Oh no my finger is bleeding, I feel quite faint! If only I had some cheese, or better yet, a bandAid!",
+          "ItemIdentifier" : "KEY1"
+        } ]
+      } ]
     } ],
+    "oneTimeUseIndicator" : false,
     "Doors" : [ {
       "LockedIndicator" : false,
       "Identifier" : "DOOR1",
       "Description" : "Wood paneled door",
       "Name" : "Door",
       "CanTakeIndicator" : false,
+      "oneTimeUseIndicator" : false,
       "RoomIdentifier" : "ROOM2",
       "Orientation" : "NORTH"
     } ],
@@ -32,12 +50,14 @@
     "Description" : "You have exited the room and survived!",
     "Name" : "Freedom",
     "CanTakeIndicator" : false,
+    "oneTimeUseIndicator" : false,
     "Doors" : [ {
       "LockedIndicator" : false,
       "Identifier" : "DOOR2",
       "Description" : "Wood paneled door",
       "Name" : "Door",
       "CanTakeIndicator" : false,
+      "oneTimeUseIndicator" : false,
       "RoomIdentifier" : "ROOM1",
       "Orientation" : "SOUTH"
     } ],
@@ -48,6 +68,7 @@
     "Identifier" : "FLASHLIGHT",
     "Description" : "Flashlight",
     "Name" : "Flashlight",
-    "CanTakeIndicator" : false
+    "CanTakeIndicator" : false,
+    "oneTimeUseIndicator" : false
   } ]
 }

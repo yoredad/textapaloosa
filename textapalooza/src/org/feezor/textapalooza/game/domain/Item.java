@@ -20,6 +20,18 @@ public class Item {
 	private boolean canTake;
 	@JsonProperty("Items")
 	private List<Item> items;
+	@JsonProperty ("oneTimeUseIndicator")
+	private boolean oneTimeUse ;
+	@JsonProperty ("CommandActions")
+	private List <CommandAction> commandActions ;
+	
+	public List<CommandAction> getCommandActions() {
+		return commandActions;
+	}
+
+	public void setCommandActions(List<CommandAction> commandActions) {
+		this.commandActions = commandActions;
+	}
 
 	public String getDescription() {
 		return description;
@@ -82,4 +94,12 @@ public class Item {
 		return items!=null && items.size()>0;
 	}
 
+	public boolean isOneTimeUse() {
+		return oneTimeUse;
+	}
+
+	public void setOneTimeUse(boolean oneTimeUse) {
+		this.oneTimeUse = oneTimeUse;
+	}
+	
 }

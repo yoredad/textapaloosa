@@ -4,6 +4,8 @@ import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
@@ -12,6 +14,8 @@ import javax.swing.JTextField;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 
+import org.feezor.textapalooza.game.domain.Action;
+import org.feezor.textapalooza.game.domain.CommandAction;
 import org.feezor.textapalooza.game.domain.Door;
 import org.feezor.textapalooza.game.domain.Game;
 import org.feezor.textapalooza.game.domain.Item;
@@ -95,6 +99,7 @@ public class GameWindow {
 		textField.setBounds(22, 557, 646, 26);
 		frame.getContentPane().add(textField);
 		textField.setColumns(10);
+		//TODO: add a listener to capture the enter key and call parse commands
 		
 		submitBtn = new JButton("Submit");
 		submitBtn.setBounds(678, 554, 105, 32);
@@ -121,7 +126,7 @@ public class GameWindow {
 		if(text==null) return;
 		String s = text.trim();
 		if(s.length()==0) return;
-		String[] vals = s.split(" ");
+		String[] vals = s.split(" "); //TODO: cleanup tokens and remove empty ones
 //		this.textArea.setText(this.textArea.getText()+"\n"+vals[0]);
 		String cmd = vals[0].trim().toLowerCase();
 		switch (cmd) {
@@ -188,6 +193,92 @@ public class GameWindow {
 				this.textArea.setText(this.textArea.getText()+"\nI don't see that item: "+thing+"\n");
 			}
 			break;
+		case "loot":
+			this.textArea.setText(curRoom.getDescription());
+			String container = "";
+			if (vals.length>1) container = vals[1].trim();
+			if(curRoom.getItems()!=null && curRoom.getItems().size()>0) {
+				boolean found = false;
+				for(Item item : curRoom.getItems()) {
+					if(item.getId().equalsIgnoreCase(container)) {
+						found=true;
+						if(item.hasItems()) {
+							this.textArea.setText(this.textArea.getText()+"\nYou took:\n");
+							boolean took1 = false ;
+							for(Item item2 : item.getItems()) {
+								if (item2.isCanTake()) {
+									this.textArea.setText(this.textArea.getText()+"\n"+item2.getDescription()+ " ["+item2.getId()+"]");
+									took1 = true ;
+									player.addItem(item2);
+								}
+							}
+							if (!took1) {
+								this.textArea.setText(this.textArea.getText()+"\nnothing:\n");
+							}
+							List <Item> newItems = new ArrayList <Item>() ; //newItems is the items that aren't takeable
+							for(Item item2 : item.getItems()) {
+								if (!item2.isCanTake()) {
+									newItems.add(item2) ;				
+								}
+							}
+							item.setItems(newItems); 
+							
+						}else {
+							this.textArea.setText(this.textArea.getText()+"\n" + item.getDescription() + " is empty\n");
+						}
+						break;
+					}
+					
+				}
+				if(!found) {
+					this.textArea.setText(this.textArea.getText()+"\nI don't see that item: "+container+"\n");
+				}
+			}else {
+				this.textArea.setText(this.textArea.getText()+"\nI don't see that item: "+container+"\n");
+			}
+			break;
+		case "use":
+			this.textArea.setText(curRoom.getDescription());
+			String item = "" ;
+			break ;
+		case "talk" :
+			this.textArea.setText(curRoom.getDescription());
+			String person = "" ;
+			if (vals.length>1) person = vals[1].trim();
+			if(curRoom.getItems()!=null && curRoom.getItems().size()>0) {
+				boolean found = false;
+				for(Item roomItem : curRoom.getItems()) {
+					if(roomItem.getId().equalsIgnoreCase(person)) {
+						found=true;
+						if (roomItem.getCommandActions() != null) {
+							boolean check = false ;
+							for (CommandAction ca : roomItem.getCommandActions()) {
+								if (cmd.equalsIgnoreCase(ca.getCommand().getName())) {
+									check = true ;
+									this.textArea.setText(this.textArea.getText()+"\n" + roomItem.getName() + " says:\n") ;
+									for (Action act : ca.getActions()) {
+										this.textArea.setText(this.textArea.getText()+"\n"+ act.getText()+"\n");
+									}
+								}
+								
+							}
+							if (!check) {
+								this.textArea.setText(this.textArea.getText()+"\nThere was no response.\n");
+							}
+						}
+						else {
+							this.textArea.setText(this.textArea.getText()+"\nThere was no response.\n");
+						}
+					}
+				}
+				if (!found) {
+					this.textArea.setText(this.textArea.getText()+"\nThat person doesn't exist.\n");
+				}
+			}
+			else {
+				this.textArea.setText(this.textArea.getText()+"\nThat person doesn't exist.\n");
+			}
+			break ;
 		default:
 			this.textArea.setText(curRoom.getDescription());
 			this.textArea.setText(this.textArea.getText()+"\nI don't understand the command: "+cmd+"\n");
