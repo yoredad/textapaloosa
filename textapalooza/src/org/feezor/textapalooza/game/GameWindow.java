@@ -2,7 +2,6 @@ package org.feezor.textapalooza.game;
 
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +10,7 @@ import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 
@@ -100,14 +100,20 @@ public class GameWindow {
 		frame.getContentPane().add(textField);
 		textField.setColumns(10);
 		//TODO: add a listener to capture the enter key and call parse commands
+		javax.swing.Action action = new AbstractAction()
+		{
+		    @Override
+		    public void actionPerformed(ActionEvent e)
+		    {
+		    	parseCommands(textField.getText());
+		    }
+		};
+
+		textField.addActionListener( action );
 		
 		submitBtn = new JButton("Submit");
 		submitBtn.setBounds(678, 554, 105, 32);
-		submitBtn.addActionListener(new ActionListener() {
-	         public void actionPerformed(ActionEvent e) {
-	             parseCommands(textField.getText());
-	          }
-	       });
+		submitBtn.addActionListener(action);
 		
 		frame.getContentPane().add(submitBtn);
 		
@@ -117,6 +123,8 @@ public class GameWindow {
 		
 		// init the display
 		textArea.setText(curRoom.getDescription());
+		
+		// give player starting items
 		if(game.getStartingItems()!=null) {
 			player.setItems(game.getStartingItems());
 		}
