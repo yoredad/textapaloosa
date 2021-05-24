@@ -25,7 +25,7 @@
       "Items" : [ {
         "LockedIndicator" : false,
         "Identifier" : "KEY1",
-        "Description" : "She has a phallic shaped key.",
+        "Description" : "Phallic shaped key.",
         "Name" : "Penis Key",
         "CanTakeIndicator" : false,
         "oneTimeUseIndicator" : false
@@ -39,9 +39,10 @@
         {
         "Command" : "USE",
         "Actions" : [ {
-          "Text" : "Oh thank you, I feek so much better! Please, have this Penis key of mine. It's the least I could do.",
+          "Text" : "Oh thank you, I feel so much better! Please, have this Penis key of mine. It's the least I could do.",
           "ItemIdentifier" : "BANDAID",
-          "RewardItemIdentifier" : "KEY1"
+          "RewardItemIdentifier" : "KEY1",
+          "OneTimeUseIndicator" : true
         },
         {
           "Text" : "Ah! It's too bright!",
@@ -60,7 +61,8 @@
       "Identifier" : "BANDAID",
       "Description" : "A bandaid",
       "Name" : "Bandaid",
-      "CanTakeIndicator" : true
+      "CanTakeIndicator" : true,
+      "OneTimeUseIndicator" : true
     	}]
     }
     ],

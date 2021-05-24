@@ -16,6 +16,7 @@ import javax.swing.JLabel;
 
 import org.feezor.textapalooza.game.domain.Action;
 import org.feezor.textapalooza.game.domain.CommandAction;
+import org.feezor.textapalooza.game.domain.CommandAction.Command;
 import org.feezor.textapalooza.game.domain.Door;
 import org.feezor.textapalooza.game.domain.Game;
 import org.feezor.textapalooza.game.domain.Item;
@@ -245,10 +246,6 @@ public class GameWindow {
 				this.textArea.setText(this.textArea.getText()+"\nI don't see that item: "+container+"\n");
 			}
 			break;
-		case "use":
-			this.textArea.setText(curRoom.getDescription());
-			String item = "" ;
-			break ;
 		case "talk" :
 			this.textArea.setText(curRoom.getDescription());
 			String person = "" ;
@@ -287,11 +284,104 @@ public class GameWindow {
 				this.textArea.setText(this.textArea.getText()+"\nThat person doesn't exist.\n");
 			}
 			break ;
+		case "use" :
+			this.textArea.setText(curRoom.getDescription());
+			thing = ""; // object we have
+			String target = ""; //what we're using it on
+			if (vals.length>1) thing = vals[1].trim();
+			if (vals.length>2) target = vals[2].trim();
+			if (thing == null || thing.length() == 0) {
+				this.textArea.setText(this.textArea.getText() + "\nYou do not have" + thing + " in your inventory.\n");
+				break ;
+			}
+			if (target == null || target.length() == 0) { 
+				this.textArea.setText(this.textArea.getText() + "\nI can not see " + thing + " in the room.\n");
+				break ;
+			}
+			
+			if (!doesListContainItem(player.getItems(), thing)) { //if it's not in the inventory
+				this.textArea.setText(this.textArea.getText() + "\nYou do not have " + thing + " in your inventory.\n");
+				break ;
+			}
+			if (!doesListContainItem(curRoom.getItems(), target)) { //if it's not in the room
+				this.textArea.setText(this.textArea.getText() + "\nI can not see " + thing + " in the room.\n");
+				break ;
+			}
+			Item targetItem = getItemFromList(curRoom.getItems(), target) ; //gives us our item
+			//iterate over the command actions for the TARGET item, and look for the 'use' command
+			//then, iterate over the actions for that command and see if one of the item identifiers is equal to thing
+			//see if the use has been used already. if not-
+			//if the target item has a reward id
+			//then remove the reward from target's inventory
+			//and give the reward item to the player
+			//display the text if the action has text
+			//look at the thing and see if it has a one time use indicator- if so, then remove it from the player's inventory
+			//if its one time use, then set the action completed to true
+			boolean foundAction = false ;
+			for (CommandAction ca : targetItem.getCommandActions()) {
+				if (Command.USE == ca.getCommand()) { //if the item's command action list contains use
+					for (Action action : ca.getActions()) { //looking through the action list of the object
+						if (thing.equalsIgnoreCase(action.getItemId()) && !action.isActionCompleted()) {
+							foundAction = true ;
+							if (action.getRewardId() != null) {
+								Item rewardItem = getItemFromList (targetItem.getItems(), action.getRewardId()) ; //gives us the reward item
+								player.addItem(rewardItem); //gives item to player
+								this.textArea.setText(this.textArea.getText()+ "\nYou receive the " + rewardItem.getDescription() + " !\n") ;
+								removeItemFromList(targetItem.getItems(), action.getRewardId()) ; //removes item from target inventory								
+							}
+							if (action.getText() != null) {
+								this.textArea.setText(this.textArea.getText() + "\n" + action.getText() + "\n") ;
+							}
+							Item thingItem = getItemFromList (player.getItems(), thing) ;
+							if (thingItem.isOneTimeUse()) { //if one time use
+								removeItemFromList (player.getItems(), thing) ; //remove it
+							}
+							if (action.isOneTimeUse()) {
+								action.setActionCompleted(true) ;																			
+							}
+						}
+					}
+				}
+			}
+			
+			if (foundAction == false) {
+				this.textArea.setText(this.textArea.getText()+ "\n it didn't seem very effective...\n" ) ;
+			}
+			
+			break ;
 		default:
 			this.textArea.setText(curRoom.getDescription());
 			this.textArea.setText(this.textArea.getText()+"\nI don't understand the command: "+cmd+"\n");
 		}
 	}
+	private boolean doesListContainItem (List<Item> items, String id) { //checks if an item is within a list, then return true/false
+		boolean found = false ;
+		for (Item item : items) { 
+			if (item.getId().equalsIgnoreCase(id)) { //if we have a match
+				found = true ;
+				break ;
+			}
+		}
+		
+		return found ;
+	}
 	
+	private Item getItemFromList (List<Item> items, String id) { //returns an item if it's within the list
+		for (Item item : items) { 
+			if (item.getId().equalsIgnoreCase(id)) { //if we have a match
+				return item ;
+			}
+		}		
+		return null ;
+	}
+	
+	private void removeItemFromList (List<Item> items, String id) {
+		for (int i=0; i<items.size(); i++) {
+			if (items.get(i).getId().equalsIgnoreCase(id)) {
+				items.remove(i) ;
+				break ;
+			}
+		}
+	}
 	
 }

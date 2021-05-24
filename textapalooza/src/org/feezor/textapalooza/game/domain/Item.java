@@ -20,7 +20,7 @@ public class Item {
 	private boolean canTake;
 	@JsonProperty("Items")
 	private List<Item> items;
-	@JsonProperty ("oneTimeUseIndicator")
+	@JsonProperty ("OneTimeUseIndicator")
 	private boolean oneTimeUse ;
 	@JsonProperty ("CommandActions")
 	private List <CommandAction> commandActions ;

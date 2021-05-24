@@ -13,6 +13,24 @@ public class Action {
 	@JsonProperty ("RewardItemIdentifier")
 	private String rewardId ;
 	
+	@JsonProperty ("OneTimeUseIndicator")
+	private boolean oneTimeUse ;
+	
+	@JsonProperty ("ActionCompleted")
+	private boolean actionCompleted ;
+	
+	public boolean isOneTimeUse() {
+		return oneTimeUse;
+	}
+	public void setOneTimeUse(boolean oneTimeUse) {
+		this.oneTimeUse = oneTimeUse;
+	}
+	public boolean isActionCompleted() {
+		return actionCompleted;
+	}
+	public void setActionCompleted(boolean actionCompleted) {
+		this.actionCompleted = actionCompleted;
+	}
 	public String getRewardId() {
 		return rewardId;
 	}
