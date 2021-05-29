@@ -73,7 +73,20 @@
       "Name" : "Door",
       "CanTakeIndicator" : false,
       "RoomIdentifier" : "ROOM2",
-      "Orientation" : "NORTH"
+      "KeyIdentifier" : "KEY1",
+      "Orientation" : "NORTH",
+      "CommandActions" : [ {
+        "Command" : "USE",
+        "Actions" : [ {
+          "Text" : "You unlock the door with a *click*.",
+          "ItemIdentifier" : "KEY1",
+          "OneTimeUseIndicator" : true
+        },
+        {
+          "Text" : "You see a sign that says 'exit.'",
+          "ItemIdentifier" : "FLASHLIGHT"
+        } ]
+       } ]
     } ],
     "WonIndicator" : false
   }, {

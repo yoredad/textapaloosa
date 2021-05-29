@@ -19,7 +19,8 @@ public class Game {
 	private List<Room> rooms;
 	@JsonProperty("StartingItems")
 	private List<Item> startingItems;
-	
+	@JsonProperty("WonIndicator")
+	private boolean won ;
 	@JsonIgnore
 	private String currentRoomId;
 	
@@ -64,6 +65,12 @@ public class Game {
 	}
 	public void setCurrentRoomId(String currentRoomId) {
 		this.currentRoomId = currentRoomId;
+	}
+	public boolean isWon() {
+		return won;
+	}
+	public void setWon(boolean won) {
+		this.won = won;
 	}
 	
 	

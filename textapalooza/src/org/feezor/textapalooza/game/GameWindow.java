@@ -2,6 +2,8 @@ package org.feezor.textapalooza.game;
 
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -100,17 +102,29 @@ public class GameWindow {
 		textField.setBounds(22, 557, 646, 26);
 		frame.getContentPane().add(textField);
 		textField.setColumns(10);
+		//textField.set
 		//TODO: add a listener to capture the enter key and call parse commands
 		javax.swing.Action action = new AbstractAction()
 		{
 		    @Override
 		    public void actionPerformed(ActionEvent e)
 		    {
-		    	parseCommands(textField.getText());
+		    	if (game.isWon()) {
+		    		System.exit(0);
+		    	}
+		    	else {
+		    		parseCommands(textField.getText());
+		    		textField.setText("");
+		    	}		    	
 		    }
 		};
 
 		textField.addActionListener( action );
+		frame.addWindowListener( new WindowAdapter() {
+		    public void windowOpened( WindowEvent e ){
+		        textField.requestFocus(); //puts the cursor in the text field post frame render on run
+		    }
+		}); 
 		
 		submitBtn = new JButton("Submit");
 		submitBtn.setBounds(678, 554, 105, 32);
@@ -124,7 +138,7 @@ public class GameWindow {
 		
 		// init the display
 		textArea.setText(curRoom.getDescription());
-		
+		textArea.setEditable(false);
 		// give player starting items
 		if(game.getStartingItems()!=null) {
 			player.setItems(game.getStartingItems());
@@ -151,7 +165,7 @@ public class GameWindow {
 			}
 			if(curRoom.getDoors()!=null && curRoom.getDoors().size()>0) {
 				for(Door door : curRoom.getDoors()) {
-					this.textArea.setText(this.textArea.getText()+"\n"+door.getDescription() + " on the " + door.getOrientation().getName()+" wall\n");
+					this.textArea.setText(this.textArea.getText()+"\n"+door.getDescription() + " [" + door.getId()+ "]" + " on the " + door.getOrientation().getName()+" wall\n");
 				}
 			}else {
 				this.textArea.setText(this.textArea.getText()+"\nThe room has no doors\n");
@@ -211,6 +225,10 @@ public class GameWindow {
 				for(Item item : curRoom.getItems()) {
 					if(item.getId().equalsIgnoreCase(container)) {
 						found=true;
+						if (item.isLocked()) { //if the box is locked
+							this.textArea.setText(this.textArea.getText()+ "\n" + item.getName() + " is locked.\n");
+							break ;
+						}
 						if(item.hasItems()) {
 							this.textArea.setText(this.textArea.getText()+"\nYou took:\n");
 							boolean took1 = false ;
@@ -303,11 +321,15 @@ public class GameWindow {
 				this.textArea.setText(this.textArea.getText() + "\nYou do not have " + thing + " in your inventory.\n");
 				break ;
 			}
-			if (!doesListContainItem(curRoom.getItems(), target)) { //if it's not in the room
+			/*if (!doesListContainItem(curRoom.getItems(), target)) { //if it's not in the room
+				this.textArea.setText(this.textArea.getText() + "\nI can not see " + thing + " in the room.\n");
+				break ;
+			}*/
+			if (getItemFromRoom(curRoom, target) == null) { //if it's not in the room/ a door
 				this.textArea.setText(this.textArea.getText() + "\nI can not see " + thing + " in the room.\n");
 				break ;
 			}
-			Item targetItem = getItemFromList(curRoom.getItems(), target) ; //gives us our item
+			Item targetItem = getItemFromRoom(curRoom, target) ; //gives us our door/item
 			//iterate over the command actions for the TARGET item, and look for the 'use' command
 			//then, iterate over the actions for that command and see if one of the item identifiers is equal to thing
 			//see if the use has been used already. if not-
@@ -318,36 +340,85 @@ public class GameWindow {
 			//look at the thing and see if it has a one time use indicator- if so, then remove it from the player's inventory
 			//if its one time use, then set the action completed to true
 			boolean foundAction = false ;
-			for (CommandAction ca : targetItem.getCommandActions()) {
-				if (Command.USE == ca.getCommand()) { //if the item's command action list contains use
-					for (Action action : ca.getActions()) { //looking through the action list of the object
-						if (thing.equalsIgnoreCase(action.getItemId()) && !action.isActionCompleted()) {
-							foundAction = true ;
-							if (action.getRewardId() != null) {
-								Item rewardItem = getItemFromList (targetItem.getItems(), action.getRewardId()) ; //gives us the reward item
-								player.addItem(rewardItem); //gives item to player
-								this.textArea.setText(this.textArea.getText()+ "\nYou receive the " + rewardItem.getDescription() + " !\n") ;
-								removeItemFromList(targetItem.getItems(), action.getRewardId()) ; //removes item from target inventory								
-							}
-							if (action.getText() != null) {
-								this.textArea.setText(this.textArea.getText() + "\n" + action.getText() + "\n") ;
-							}
-							Item thingItem = getItemFromList (player.getItems(), thing) ;
-							if (thingItem.isOneTimeUse()) { //if one time use
-								removeItemFromList (player.getItems(), thing) ; //remove it
-							}
-							if (action.isOneTimeUse()) {
-								action.setActionCompleted(true) ;																			
+			
+			if (targetItem.getCommandActions() != null) {		
+				for (CommandAction ca : targetItem.getCommandActions()) {
+					if (Command.USE == ca.getCommand()) { //if the item's command action list contains use
+						for (Action action : ca.getActions()) { //looking through the action list of the object
+							if (thing.equalsIgnoreCase(action.getItemId()) && !action.isActionCompleted()) {
+								foundAction = true ;
+								if (thing.equalsIgnoreCase(targetItem.getKeyId())) {
+									targetItem.setLocked(false);
+								}
+								if (action.getRewardId() != null) {
+									Item rewardItem = getItemFromList (targetItem.getItems(), action.getRewardId()) ; //gives us the reward item
+									player.addItem(rewardItem); //gives item to player
+									this.textArea.setText(this.textArea.getText()+ "\nYou receive the " + rewardItem.getDescription() + " !\n") ;
+									removeItemFromList(targetItem.getItems(), action.getRewardId()) ; //removes item from target inventory								
+								}
+								if (action.getText() != null) {
+									this.textArea.setText(this.textArea.getText() + "\n" + action.getText() + "\n") ;
+								}
+								Item thingItem = getItemFromList (player.getItems(), thing) ;
+								if (thingItem.isOneTimeUse()) { //if one time use
+									removeItemFromList (player.getItems(), thing) ; //remove it
+								}
+								if (action.isOneTimeUse()) {
+									action.setActionCompleted(true) ;																			
+								}
 							}
 						}
 					}
 				}
 			}
-			
 			if (foundAction == false) {
-				this.textArea.setText(this.textArea.getText()+ "\n it didn't seem very effective...\n" ) ;
+				this.textArea.setText(this.textArea.getText()+ "\nIt didn't seem very effective...\n" ) ;
 			}
 			
+			break ;
+		//is there even a door in the direction? get the door object
+		//if yes, check if locked. If so, print locked message
+		//if unlocked, go through door
+		//set cur room to the roomId associated w/ the door
+		//display the new curRoom description
+		//if the room is the exit room, disable the input, change the submit button to an exit button, and set game.Won = true
+			//modify the button click event for game.won- if detected, then exit the program
+		case "north": 
+		case "south":
+		case "west":
+		case "east":
+			this.textArea.setText(curRoom.getDescription());
+			if (curRoom.getDoors() != null) {
+				boolean foundDoor = false ;
+				for (Door door : curRoom.getDoors()) {
+					if (cmd.equalsIgnoreCase(door.getOrientation().getCode())) {
+						foundDoor = true ;
+						if (door.isLocked()) {
+							this.textArea.setText(this.textArea.getText()+"\n" + door.getDescription()+ " [" + door.getId() + "]" + " is locked.\n");
+							break ;
+						}
+						for (Room room : game.getRooms()) {
+							if (room.getId().equalsIgnoreCase(door.getRoomId())) { //if the room matches the roomId associated with the door
+								curRoom = room ;
+								break ;
+							}
+						}
+						this.textArea.setText(curRoom.getDescription());
+						if (curRoom.isWon()) {
+							game.setWon(true) ;
+							textField.setEnabled(false);
+							submitBtn.setText("Exit");
+						}
+					}
+				}
+				if (!foundDoor) {
+					this.textArea.setText(curRoom.getDescription() + "\nThere is no door on the " + cmd + " wall.\n");
+				}
+			}
+			else {
+				this.textArea.setText(curRoom.getDescription() + "\nThere are no windows, and no doors... so that leaves you with this chilling challenge- to find, a way out! Haw haw haw haw!\n");
+
+			}
 			break ;
 		default:
 			this.textArea.setText(curRoom.getDescription());
@@ -370,6 +441,22 @@ public class GameWindow {
 		for (Item item : items) { 
 			if (item.getId().equalsIgnoreCase(id)) { //if we have a match
 				return item ;
+			}
+		}		
+		return null ;
+	}
+	
+	private Item getItemFromRoom (Room room, String id) { //returns an item if it's within the list
+		List<Item> items = room.getItems() ;		
+		for (Item item : items) { 
+			if (item.getId().equalsIgnoreCase(id)) { //if we have a match
+				return item ;
+			}
+		}
+		List <Door> doors = room.getDoors() ;		
+		for (Door door : doors) { 
+			if (door.getId().equalsIgnoreCase(id)) { //if we have a match
+				return (Item)door ; //explicit up cast, but technically not necessary as Door extends Item (see Door class)
 			}
 		}		
 		return null ;
