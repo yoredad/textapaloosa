@@ -1,7 +1,7 @@
 {
   "Description" : "Zoe's Big Adventure Part 1",
   "Title" : "Girl We Tryin'",
-  "Help" : "Try one of:\nLOOK\nSEARCH\nGO\nOPEN\nEXIT\nINVENTORY\nCREDITS\nLOOT\nTAKE\nUSE\n",
+  "Help" : "Try one of:\nHELP\nLOOK\nSEARCH\nGO\nOPEN\nEXIT\nINVENTORY\nCREDITS\nLOOT\nTAKE\nUSE\nINSPECT\n",
   "Credits" : "YoreDad\n",
   "Rooms" : [ {
     "LockedIndicator" : false,
@@ -14,6 +14,7 @@
       "Identifier" : "SOFA",
       "Description" : "A red sofa",
       "Name" : "Sofa",
+      "Inspect" : "A red sofa that looks easy to slide off of.",
       "CanTakeIndicator" : false
     },
      {
@@ -22,11 +23,13 @@
       "Description" : "A pale spaced out girl",
       "Name" : "Girl",
       "CanTakeIndicator" : false,
+      "Inspect" : "A pale spaced out girl.",
       "Items" : [ {
         "LockedIndicator" : false,
         "Identifier" : "KEY1",
         "Description" : "Phallic shaped key.",
         "Name" : "Penis Key",
+        "Inspect" : "A key with two round holes at the bottom, and an erect shaft.",
         "CanTakeIndicator" : false,
         "oneTimeUseIndicator" : false
       } ],
@@ -55,14 +58,16 @@
       "Identifier" : "FIRSTAID",
       "Description" : "A first aid kit mounted on the wall",
       "Name" : "First Aid Kit",
+      "Inspect" : "A box with a green plus on it, mounted to the wall. It has seen better days.",
       "CanTakeIndicator" : false,
        "Items" : [ {
-      "LockedIndicator" : false,
-      "Identifier" : "BANDAID",
-      "Description" : "A bandaid",
-      "Name" : "Bandaid",
-      "CanTakeIndicator" : true,
-      "OneTimeUseIndicator" : true
+	      "LockedIndicator" : false,
+	      "Identifier" : "BANDAID",
+	      "Description" : "A bandaid",
+	      "Name" : "Bandaid",
+	      "Inspect" : "I am stuck on Band-Aid brand because Band-Aids stuck on me",
+	      "CanTakeIndicator" : true,
+	      "OneTimeUseIndicator" : true
     	}]
     }
     ],
@@ -71,6 +76,7 @@
       "Identifier" : "DOOR1",
       "Description" : "Wood paneled door",
       "Name" : "Door",
+      "Inspect" : "A door with a sense of completion.",
       "CanTakeIndicator" : false,
       "RoomIdentifier" : "ROOM2",
       "KeyIdentifier" : "KEY1",
@@ -100,6 +106,7 @@
       "Identifier" : "DOOR2",
       "Description" : "Wood paneled door",
       "Name" : "Door",
+      "Inspect" : "A wood paneled door.",
       "CanTakeIndicator" : false,
       "RoomIdentifier" : "ROOM1",
       "Orientation" : "SOUTH"
@@ -111,6 +118,7 @@
     "Identifier" : "FLASHLIGHT",
     "Description" : "Flashlight",
     "Name" : "Flashlight",
+    "Inspect" : "A long, girthy flashlight.",
     "CanTakeIndicator" : false
   } ]
 }

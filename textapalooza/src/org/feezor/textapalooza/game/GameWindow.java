@@ -6,6 +6,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.JFrame;
@@ -38,6 +39,8 @@ public class GameWindow {
 	private Game game = null;
 	private Room curRoom = null;
 	private Player player = null;
+	public List<String> gameKeyList = new ArrayList<String> () ;
+	private static final String COMMAND_LIST = "HELP,LOOK,SEARCH,GO,OPEN,EXIT,INVENTORY,CREDITS,LOOT,TAKE,USE,INSPECT" ;
 	
 	/**
 	 * Launch the application.
@@ -80,8 +83,45 @@ public class GameWindow {
 	/**
 	 * Initialize the contents of the frame.
 	 */
+	private void getItemItems (Item item, List<String> masterList) {
+		if (!masterList.contains(item.getId().toLowerCase())) {
+			masterList.add(item.getId().toLowerCase()) ;
+		}
+		List<Item> items = item.getItems() ;
+		if (items == null || items.size() < 1) {
+			return ;
+		}
+		for (Item itemsWithin : items) {
+			getItemItems (itemsWithin, masterList) ;
+		}
+	}
+	
+	private void createGameKeyList(Game game, List<String> masterList) {
+		//adding the starting items
+		for (Item item : game.getStartingItems()) {
+			getItemItems (item, masterList) ;
+		}
+		//adding the rooms and items within
+		for (Room room : game.getRooms()) {
+			getItemItems (room, masterList) ;
+			if (room.getDoors() != null) {
+				for (Door door : room.getDoors() ){ //adding the doors
+					getItemItems (door, masterList) ;
+				}
+			}
+
+		}
+		//add command list
+		masterList.addAll(Arrays.asList(COMMAND_LIST.toLowerCase().split(","))) ;
+		
+	}
+	
 	private void initialize(File f) {
 		game = JSONUtils.jsonToObject(FileUtil.readFile(f), Game.class);
+		
+		//iterate over the game object and add ALL the Id's to the gameKeyList
+		createGameKeyList (game, gameKeyList) ;
+		
 		
 		player = new Player();
 		curRoom = game.getRooms().get(0);
@@ -145,11 +185,29 @@ public class GameWindow {
 		}
 	}
 	
+	private String[] getTokens (String s, List<String> gameKeyList) {
+		List<String> tokens = new ArrayList<String>() ;
+		String[] vals = s.trim().split(" ") ;
+		for (String token : vals) {
+			if (gameKeyList.contains(token.trim().toLowerCase())) {
+				tokens.add(token.trim()) ;
+			}
+		}
+		
+		
+		return tokens.toArray(new String[0]) ;
+	}
+	
 	private void parseCommands(String text) {
 		if(text==null) return;
 		String s = text.trim();
-		if(s.length()==0) return;
-		String[] vals = s.split(" "); //TODO: cleanup tokens and remove empty ones
+		if(s.length()==0) return;		
+		String[] vals = getTokens (s, gameKeyList) ; //Cleanup tokens and remove empty ones
+		if (!(vals.length > 0)) {
+			this.textArea.setText(curRoom.getDescription());
+			this.textArea.setText(this.textArea.getText()+"\nI don't understand the command.\n");
+			return ; //bye bye
+		}
 //		this.textArea.setText(this.textArea.getText()+"\n"+vals[0]);
 		String cmd = vals[0].trim().toLowerCase();
 		switch (cmd) {
@@ -418,6 +476,27 @@ public class GameWindow {
 			else {
 				this.textArea.setText(curRoom.getDescription() + "\nThere are no windows, and no doors... so that leaves you with this chilling challenge- to find, a way out! Haw haw haw haw!\n");
 
+			}
+			break ;
+			
+		case "inspect" : 
+			this.textArea.setText(curRoom.getDescription());
+			target = ""; //what we're inspecting
+			if (vals.length>1) target = vals[1].trim();
+			if (target == null || target.length() == 0) { 
+				this.textArea.setText(this.textArea.getText() + "\nI can not see " + target + " anywhere.\n");
+				break ;
+			}
+			if (doesListContainItem (player.getItems() , target)) {
+				targetItem = getItemFromList (player.getItems(), target) ;
+				this.textArea.setText(this.textArea.getText() + "\n" + targetItem.getInspect() + "\n") ;
+			}
+			else if (getItemFromRoom (curRoom, target) != null) {
+				targetItem = getItemFromRoom (curRoom, target) ;
+				this.textArea.setText(this.textArea.getText() + "\n" + targetItem.getInspect() + "\n") ;
+			}
+			else {
+				this.textArea.setText(this.textArea.getText() + "\nI can not see " + target + " anywhere.\n");
 			}
 			break ;
 		default:

@@ -24,6 +24,8 @@ public class Item {
 	private boolean oneTimeUse ;
 	@JsonProperty ("CommandActions")
 	private List <CommandAction> commandActions ;
+	@JsonProperty ("Inspect")
+	private String inspect ;
 	
 	public List<CommandAction> getCommandActions() {
 		return commandActions;
@@ -100,6 +102,14 @@ public class Item {
 
 	public void setOneTimeUse(boolean oneTimeUse) {
 		this.oneTimeUse = oneTimeUse;
+	}
+
+	public String getInspect() {
+		return inspect;
+	}
+
+	public void setInspect(String inspect) {
+		this.inspect = inspect;
 	}
 	
 }
